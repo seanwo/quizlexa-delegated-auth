@@ -1,0 +1,25 @@
+{
+  "name": "quizlexa-delegated-auth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sean Wohlgemuth",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^2.0.0",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "simple-oauth2": "^1.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seanwo/quizlexa-delegated-auth.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seanwo/quizlexa-delegated-auth/issues"
+  },
+  "homepage": "https://github.com/seanwo/quizlexa-delegated-auth#readme",
+  "description": ""
+}
