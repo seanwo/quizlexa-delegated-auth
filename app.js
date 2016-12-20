@@ -3,8 +3,8 @@
 require('dotenv').config();
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
-const redirect_host = 'http://localhost:3000';
-//const redirect_host = 'https://quizlexa.com';
+//const redirect_host = 'http://localhost:3000';
+const redirect_host = 'https://quizlexa.com';
 
 const express = require('express');
 const app = express();
@@ -89,10 +89,10 @@ app.get('/oauth/callback', (req, res) => {
       return res.status(401).send('Authentication failed');
     }
     const token = oauth2.accessToken.create(result);
-    var redirectUri = sess.redirect_uri + '&' +
+    var redirectUri = sess.redirect_uri + '#' +
       'state=' + sess.state + '&' +
       'client_id=' + sess.client_id + "&" +
-      'access_token=' + result.access_token + '&' +
+      'access_token=' + result.user_id + '|' + result.access_token + '&' +
       'token_type=Bearer'
     console.log('redirect[callback]: ' + redirectUri);
     return res.redirect(redirectUri);
