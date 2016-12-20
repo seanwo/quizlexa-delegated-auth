@@ -1,11 +1,10 @@
 'use strict';
 
-//require('dotenv').config();
+require('dotenv').config();
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
-//const redirect_host = 'http://localhost:3000';
-//const redirect_host = 'http://quizlexa-delegated-auth-env.b2wsjx9dsn.us-east-1.elasticbeanstalk.com';
-const redirect_host = 'https://quizlexa.com';
+const redirect_host = 'http://localhost:3000';
+//const redirect_host = 'https://quizlexa.com';
 
 const express = require('express');
 const app = express();
@@ -17,7 +16,7 @@ app.use(session({
   secret: client_secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: (60000 * 10), domain: '.quizlexa.com' }
+  cookie: { maxAge: (60000 * 10) }
 }));
 
 const simpleOauthModule = require('simple-oauth2');
