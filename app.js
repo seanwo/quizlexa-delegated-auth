@@ -1,20 +1,23 @@
 'use strict';
 
-require('dotenv').config();
+//require('dotenv').config();
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
 //const redirect_host = 'http://localhost:3000';
-const redirect_host = 'http://quizlexa-delegated-auth-env.b2wsjx9dsn.us-east-1.elasticbeanstalk.com';
+//const redirect_host = 'http://quizlexa-delegated-auth-env.b2wsjx9dsn.us-east-1.elasticbeanstalk.com';
+const redirect_host = 'https://quizlexa.com';
 
 const express = require('express');
 const app = express();
 
 const session = require('express-session');
+app.set('trust proxy', 1);
 app.use(session({
+  name: 'quizlexa.sid',
   secret: client_secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: (60000 * 10) }
+  cookie: { maxAge: (60000 * 10), domain: '.quizlexa.com' }
 }));
 
 const simpleOauthModule = require('simple-oauth2');
@@ -50,6 +53,7 @@ function createAuthorizationUri(state) {
 }
 
 app.get('/oauth/request_token', (req, res) => {
+  console.log('\nheaders[request_token]: ' + JSON.stringify(req.headers));
   if (req.query.response_type !== 'token') {
     return res.status(400).send('only supports token grant flow');
   }
@@ -60,12 +64,15 @@ app.get('/oauth/request_token', (req, res) => {
   const nonce = createRandomNonce(32);
   sess.nonce = nonce;
   var authorizationUri = createAuthorizationUri(nonce);
-  console.log('redirect to destination: '+authorizationUri);
+  console.log('session[request_token]: ' + JSON.stringify(sess));
+  console.log('redirect[request_token]: ' + authorizationUri);
   res.redirect(authorizationUri);
 });
 
 app.get('/oauth/callback', (req, res) => {
+  console.log('headers[callback]: ' + JSON.stringify(req.headers));
   var sess = req.session;
+  console.log('session[callback]: ' + JSON.stringify(sess));
 
   if (req.query.state !== sess.nonce) {
     console.error("[session nonce:" + sess.nonce + "] [request state:" + req.query.state + ']');
@@ -83,12 +90,12 @@ app.get('/oauth/callback', (req, res) => {
       return res.status(401).send('Authentication failed');
     }
     const token = oauth2.accessToken.create(result);
-    var redirectUri = sess.redirect_uri + '?' +
+    var redirectUri = sess.redirect_uri + '&' +
       'state=' + sess.state + '&' +
       'client_id=' + sess.client_id + "&" +
       'access_token=' + result.access_token + '&' +
       'token_type=Bearer'
-    console.log('redirect to origin: '+redirectUri);
+    console.log('redirect[callback]: ' + redirectUri);
     return res.redirect(redirectUri);
   });
 });
@@ -99,7 +106,7 @@ app.get('/oauth/inspect', (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('Hello<br><a href="/oauth/request_token?' +
-    'response_type=token&redirect_uri=' + redirect_host + '/oauth/inspect&' +
+    'response_type=token&redirect_uri=' + redirect_host + '/oauth/inspect?vendorId=fakevendor&' +
     'client_id=fakeid&' +
     'state=1234567890&' +
     '">Log in with Quizlet</a>');
