@@ -72,17 +72,13 @@ app.get('/oauth/request_token', (req, res) => {
   if (req.query.response_type !== 'token') {
     return res.status(400).send('only supports token grant flow');
   }
-  console.log("request redirect_uri: " + req.query.redirect_uri);
-  console.log("valid redirect url array: " + redirect_urls);
   var isRedirectUrlValid = false;
   for (var i = 0; i < redirect_urls.length; i++) {
-    console.log("valid redirect_urls #" + i + ": " + redirect_urls[i]);
     if (req.query.redirect_uri.startsWith(redirect_urls[i]) == true) {
       isRedirectUrlValid = true;
       break;
     }
   }
-  console.log("redirect url determined to be: " + isRedirectUrlValid);
   if (isRedirectUrlValid == false) {
     return res.status(400).send('redirection url is not authorized');
   }
