@@ -1,10 +1,26 @@
 'use strict';
 
 require('dotenv').config();
+
+var development = false;
+if ((typeof process.env.DEVELOPMENT != 'undefined') && (process.env.DEVELOPMENT == 'true')) {
+  development = true;
+}
+
+var redirect_urls = process.env.REDIRECT_URLS.split('|');
+for (var i = 0; i < redirect_urls.length; i++) {
+  redirect_urls[i] = redirect_urls[i].trim();
+}
+
+var redirect_host;
+if (development == true) {
+  redirect_host = 'http://localhost:3000';
+} else {
+  redirect_host = 'https://quizlexa.com';
+}
+
 const client_id = process.env.CLIENT_ID;
 const client_secret = process.env.CLIENT_SECRET;
-//const redirect_host = 'http://localhost:3000';
-const redirect_host = 'https://quizlexa.com';
 
 const express = require('express');
 const app = express();
@@ -55,6 +71,20 @@ app.get('/oauth/request_token', (req, res) => {
   console.log('\nheaders[request_token]: ' + JSON.stringify(req.headers));
   if (req.query.response_type !== 'token') {
     return res.status(400).send('only supports token grant flow');
+  }
+  console.log("request redirect_uri: " + req.query.redirect_uri);
+  console.log("valid redirect url array: " + redirect_urls);
+  var isRedirectUrlValid = false;
+  for (var i = 0; i < redirect_urls.length; i++) {
+    console.log("valid redirect_urls #" + i + ": " + redirect_urls[i]);
+    if (req.query.redirect_uri.startsWith(redirect_urls[i]) == true) {
+      isRedirectUrlValid = true;
+      break;
+    }
+  }
+  console.log("redirect url determined to be: " + isRedirectUrlValid);
+  if (isRedirectUrlValid == false) {
+    return res.status(400).send('redirection url is not authorized');
   }
   var sess = req.session;
   sess.state = req.query.state;
