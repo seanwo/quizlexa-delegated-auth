@@ -42,10 +42,10 @@ function createRandomNonce(length) {
   return text;
 }
 
-function createAuthorizationUri(state) {
+function createAuthorizationUri(state, scope) {
   var authorizationUri = oauth2.authorizationCode.authorizeURL({
     redirect_uri: redirect_host + '/oauth/callback',
-    scope: 'read',
+    scope: scope,
     state: state
   });
   return authorizationUri;
@@ -62,7 +62,7 @@ app.get('/oauth/request_token', (req, res) => {
   sess.redirect_uri = req.query.redirect_uri;
   const nonce = createRandomNonce(32);
   sess.nonce = nonce;
-  var authorizationUri = createAuthorizationUri(nonce);
+  var authorizationUri = createAuthorizationUri(nonce, req.query.scope);
   console.log('session[request_token]: ' + JSON.stringify(sess));
   console.log('redirect[request_token]: ' + authorizationUri);
   res.redirect(authorizationUri);
@@ -108,6 +108,7 @@ app.get('/', (req, res) => {
     'response_type=token&redirect_uri=' + redirect_host + '/oauth/inspect?vendorId=fakevendor&' +
     'client_id=fakeid&' +
     'state=1234567890&' +
+    'scope=read%20write_set' +
     '">Log in with Quizlet</a>');
 });
 
