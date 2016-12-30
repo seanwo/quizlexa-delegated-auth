@@ -50,12 +50,12 @@ Instead of configuring your Alexa Skill to use an "Auth Code Grant", you can con
 
 Flow:
 
-+ Configure the Alexa Skill site's Authorization URL to be ***this** site's /oauth/request_token
++ Configure the Alexa Skill site's Authorization URL to be **this** site's /oauth/request_token
 + During account linking, **this** site receives a token request with a random state, client id, and redirect URL from Amazon
 + **This** site then uses its Quizlet client and secret (established seperately with Quizlet) along with a new random state to do a GET /authorize against Quizlet
 + Quizlet prompts the user for login credentials.  Upon a successful login...
 + Quizlet redirects back to **this** sites's /oauth/callback
-+ **This** site confirm that the callback presents the proper new random state we set to prevent CSRF along with an authorization token
++ **This** site confirm that the callback presents the proper new random state we set to prevent CSRF along with an authorization code
 + **This** site uses the returned authorization code to perform a POST /oauth/token against Quizlet to get the access token similiar to the one shown above
 + **This** site then repackages the token into a redirect back to Amazon using the original random state, client id, and redirect URL they made during their initial request to this site.  The "magic" is that the "access_token" we repackage to Amazon is now in the format "clientID|accesstoken" so that the Alexa Skill can now parse both pieces of data it needs from the Skill's session's access token in order to call the Quizlet API
 
