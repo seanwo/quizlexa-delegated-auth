@@ -1,6 +1,9 @@
 'use strict';
 
 require('dotenv').config();
+var cuid = require('cuid');
+
+const landing_url = "http://www.quizlexa.com";
 
 var development = false;
 if ((typeof process.env.DEVELOPMENT != 'undefined') && (process.env.DEVELOPMENT == 'true')) {
@@ -49,15 +52,6 @@ const oauth2 = simpleOauthModule.create({
   },
 });
 
-function createRandomNonce(length) {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (var i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-}
-
 function createAuthorizationUri(state, scope) {
   var authorizationUri = oauth2.authorizationCode.authorizeURL({
     redirect_uri: redirect_host + '/oauth/callback',
@@ -68,7 +62,6 @@ function createAuthorizationUri(state, scope) {
 }
 
 app.get('/oauth/request_token', (req, res) => {
-  console.log('\nheaders[request_token]: ' + JSON.stringify(req.headers));
   if (req.query.response_type !== 'token') {
     return res.status(400).send('only supports token grant flow');
   }
@@ -86,22 +79,17 @@ app.get('/oauth/request_token', (req, res) => {
   sess.state = req.query.state;
   sess.client_id = req.query.client_id;
   sess.redirect_uri = req.query.redirect_uri;
-  const nonce = createRandomNonce(32);
+  const nonce = cuid();
   sess.nonce = nonce;
   var authorizationUri = createAuthorizationUri(nonce, req.query.scope);
-  console.log('session[request_token]: ' + JSON.stringify(sess));
-  console.log('redirect[request_token]: ' + authorizationUri);
   res.redirect(authorizationUri);
 });
 
 app.get('/oauth/callback', (req, res) => {
-  console.log('headers[callback]: ' + JSON.stringify(req.headers));
   var sess = req.session;
-  console.log('session[callback]: ' + JSON.stringify(sess));
 
   if (req.query.state !== sess.nonce) {
-    console.error("[session nonce:" + sess.nonce + "] [request state:" + req.query.state + ']');
-    return res.status(401).send('CSRF Detected!');
+    return res.status(401).send('CSRF or session timeout.  Please retry.');
   }
 
   const code = req.query.code;
@@ -120,24 +108,31 @@ app.get('/oauth/callback', (req, res) => {
       'client_id=' + sess.client_id + "&" +
       'access_token=' + result.user_id + '|' + result.access_token + '&' +
       'token_type=Bearer'
-    console.log('redirect[callback]: ' + redirectUri);
     return res.redirect(redirectUri);
   });
 });
 
-app.get('/oauth/inspect', (req, res) => {
-  res.status(200).send(req.url);
-});
+//Development ONLY
+
+// app.get('/oauth/inspect', (req, res) => {
+//   res.status(200).send(req.url);
+// });
+
+//Development ONLY
+
+// app.get('/oauth/mock', (req, res) => {
+//   res.send('<a href="/oauth/request_token?' +
+//     'response_type=token&redirect_uri=' + redirect_host + '/oauth/inspect?vendorId=fakevendor&' +
+//     'client_id=fakeid&' +
+//     'state=1234567890&' +
+//     'scope=read%20write_set' +
+//     '">Request Token!</a>');
+// });
 
 app.get('/', (req, res) => {
-  res.send('Hello<br><a href="/oauth/request_token?' +
-    'response_type=token&redirect_uri=' + redirect_host + '/oauth/inspect?vendorId=fakevendor&' +
-    'client_id=fakeid&' +
-    'state=1234567890&' +
-    'scope=read%20write_set' +
-    '">Log in with Quizlet</a>');
+  res.redirect(landing_url);
 });
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log('Express server started on port ' + (process.env.PORT || 3000));
+  console.log('Server started on port ' + (process.env.PORT || 3000));
 });
