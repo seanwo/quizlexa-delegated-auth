@@ -62,6 +62,7 @@ function createAuthorizationUri(state, scope) {
 }
 
 app.get('/oauth/request_token', (req, res) => {
+  console.log(req.headers);
   if (req.query.response_type !== 'token') {
     return res.status(400).send('only supports token grant flow');
   }
@@ -129,7 +130,7 @@ app.get('/oauth/callback', (req, res) => {
 //     '">Request Token!</a>');
 // });
 
-app.get('/', (req, res) => {
+app.get('/*', (req, res) => {
   res.redirect(landing_url);
 });
 
