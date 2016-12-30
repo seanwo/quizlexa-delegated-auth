@@ -4,7 +4,7 @@ This server is used to delegate an [OAuth 2.0](https://tools.ietf.org/html/rfc67
 
 The token returned from Quizlet during user authentication looks similiar to the following as outlined in their [API documentation regarding authorization code flow](https://quizlet.com/api/2.0/docs/authorization-code-flow)
 
-'''
+```
 {
 	"access_token": "46a54395e3d1108ffbc56c7f6ca9dd3d",
 	"token_type": "bearer",
@@ -12,13 +12,13 @@ The token returned from Quizlet during user authentication looks similiar to the
 	"scope": "read",
 	"user_id": "quizletusername"
 }
-'''
+```
 
 All future calls the Quizlet API require both the ["access token"](https://quizlet.com/api/2.0/docs/making-api-calls) and knowledge of the "user_id" from the full token returned above to make [user level API calls](https://quizlet.com/api/2.0/docs/users).  This is the reason why Quizlet returns both the "access_token" and "user_id" as part of the access token request response.
 
 If you setup an Alexa Skill to do account linking and to use an "Auth Code Grant" (using the authorization code grant flow), you will receive the "access_token" as part of the Alexa Skill session:
 
-'''
+```
 {
     "version": "1.0",
     "session": {
@@ -40,7 +40,7 @@ If you setup an Alexa Skill to do account linking and to use an "Auth Code Grant
         "locale": "en-US"
     }
 }
-'''
+```
 
 Notice that the "userId" that you receive is not the Quizlet "user_id", it is an Alex Skills user ID.  This means that using the standard authorization code grant flow setup for your Alexa Skill will provide the Skill with an "access_token" which can be used to call the Quizlet API but with no knowledge of the Quizlet "user_id" needed to do things like query the user's sets or favorites.
 
