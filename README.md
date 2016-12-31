@@ -42,17 +42,17 @@ If you setup an Alexa Skill to do account linking and to use an "Auth Code Grant
 }
 ```
 
-Notice that the "userId" that you receive is not the Quizlet "user_id", it is an Alex Skills user ID.  This means that using the standard authorization code grant flow setup for your Alexa Skill will provide the Skill with an "access_token" which can be used to call the Quizlet API but with no knowledge of the Quizlet "user_id" needed to do things like query the user's sets or favorites.
+Notice that the "userId" that you receive is not the Quizlet "user_id", it is an Alex Skills user ID.  This means that using the standard authorization code grant flow setup for your Alexa Skill will provide the Skill with an "access_token" which can be used to call the Quizlet API but with no knowledge of the Quizlet "user_id" needed to do things like query the user's sets or favorites.  Quizlet currently does not provide a way to get the "user_id" using only the "access_token".
 
 This is where this delegate authentication server comes in.
 
-Instead of configuring your Alexa Skill to use an "Auth Code Grant", you can configure it to use an "Implicit Grant".  Configuring the Authorization URL for the Alexa Skill to request an access token from an HTTPS version of **this** server then delegates this server to use its client id and secret (established seperately with Quizlet) to redirect the request to Quizlet (and then back again to Amazon).
+Instead of configuring your Alexa Skill to use an "Auth Code Grant", you can configure it to use an "Implicit Grant".  Configuring the Authorization URL for the Alexa Skill to request an access token from an HTTPS version of **this** server then delegates this server to use its client id and secret (established separately with Quizlet) to redirect the request to Quizlet (and then back again to Amazon).
 
 Flow:
 
 + Configure the Alexa Skill site's Authorization URL to be **this** site's /oauth/request_token
 + During account linking, **this** site receives a token request with a random state, client id, and redirect URL from Amazon
-+ **This** site then uses its Quizlet client and secret (established seperately with Quizlet) along with a new random state to do a GET /authorize against Quizlet
++ **This** site then uses its Quizlet client and secret (established separately with Quizlet) along with a new random state to do a GET /authorize against Quizlet
 + Quizlet prompts the user for login credentials.  Upon a successful login...
 + Quizlet redirects back to **this** sites's /oauth/callback
 + **This** site confirm that the callback presents the proper new random state we set to prevent CSRF along with an authorization code
