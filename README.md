@@ -65,5 +65,5 @@ More information on setting up account linking for an Alex Skill can be found at
 
 Sites that were helpful during research and development include:
 
-+[Lelylan's simple-oauth2 example](https://github.com/lelylan/simple-oauth2/blob/master/example/index.js)
-+[Juan Pablo Claude's post over at Big Nerd Ranch](https://www.bignerdranch.com/blog/developing-alexa-skills-locally-with-nodejs-account-linking-using-oauth/) although as mentioned this can all be done now at Amazon using an "Auth Code Grant" (unless you need to manipulate the access token returned to Amazon!)
++ [Lelylan's simple-oauth2 example](https://github.com/lelylan/simple-oauth2/blob/master/example/index.js)
++ [Juan Pablo Claude's post over at Big Nerd Ranch](https://www.bignerdranch.com/blog/developing-alexa-skills-locally-with-nodejs-account-linking-using-oauth/) although as mentioned this can all be done now at Amazon using an "Auth Code Grant" (unless you need to manipulate the access token returned to Amazon!)
