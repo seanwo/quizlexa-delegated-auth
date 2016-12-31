@@ -59,9 +59,11 @@ Flow:
 + **This** site uses the returned authorization code to perform a POST /oauth/token against Quizlet to get the access token similiar to the one shown above
 + **This** site then repackages the token into a redirect back to Amazon using the original random state, client id, and redirect URL they made during their initial request to this site.  The "magic" is that the "access_token" we repackage to Amazon is now in the format "clientID|accesstoken" so that the Alexa Skill can now parse both pieces of data it needs from the Skill's session's access token in order to call the Quizlet API
 
-Note: Login during account linking must happen with a 10 minute window or it will be considered invalid.  This is because this site must hold on to information between redirect to and from Quizlet.  This is done in the form of a cookie uid that identifies this site's local session storage.  That session storage expires after 10 minutes to keep memory from filling up.
+Note: Login during account linking must happen with a 10 minute window or it will be considered invalid.  This is because **this** site must hold on to information between redirects to and from Quizlet.  This is done in the form of a cookie uid that identifies **this** site's local session storage.  That session storage expires after 10 minutes to keep memory from filling up.
 
 More information on setting up account linking for an Alex Skill can be found at [here](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/linking-an-alexa-user-with-a-user-in-your-system).
+
 Sites that were helpful during research and development include:
-[Lelylan's simple-oauth2 example](https://github.com/lelylan/simple-oauth2/blob/master/example/index.js)
-[Juan Pablo Claude's post over at Big Nerd Ranch](https://www.bignerdranch.com/blog/developing-alexa-skills-locally-with-nodejs-account-linking-using-oauth/) although as mentioned this can all be done now at Amazon using an "Auth Code Grant" (unless you need to manipulate the access token returned to Amazon!)
+
++[Lelylan's simple-oauth2 example](https://github.com/lelylan/simple-oauth2/blob/master/example/index.js)
++[Juan Pablo Claude's post over at Big Nerd Ranch](https://www.bignerdranch.com/blog/developing-alexa-skills-locally-with-nodejs-account-linking-using-oauth/) although as mentioned this can all be done now at Amazon using an "Auth Code Grant" (unless you need to manipulate the access token returned to Amazon!)
