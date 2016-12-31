@@ -2,6 +2,8 @@
 
 This server is used to delegate an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) token request from an Alexa Skill to Quizlet's Authorization Server.
 
+![alt text](https://quizlet.com/static/ThisUsesQuizlet-Blue.png "Powered by Quizlet")
+
 The token returned from Quizlet during user authentication looks similiar to the following as outlined in their [API documentation regarding authorization code flow](https://quizlet.com/api/2.0/docs/authorization-code-flow)
 
 ```
